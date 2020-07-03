@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 /**
  * <b>Java内置的四大核心函数式接口</b>
  *
- * @since jdk8
+ * @since jdk1.8
  */
 public class BuildInFunctionInterface {
 
