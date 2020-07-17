@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SpringBootTest
-class MultiplexApplicationTests {
+class MultiplexApplicationTests{
 
     @Autowired
     private PaymentNotifySender sender;

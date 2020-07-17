@@ -1,4 +1,4 @@
-package org.java.multiplex.pay;
+package org.java.multiplex.pay.alipay;
 
 /**
  * @author wangpeng
