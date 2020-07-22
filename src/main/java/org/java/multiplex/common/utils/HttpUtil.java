@@ -7,20 +7,28 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 
+import javax.net.ssl.SSLContext;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.*;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * HttpClient4.5是org.apache.http.client下操作远程url的工具包
- *
  * @author wangpeng
  * @version 1.0
  * @description apacheHttpClient4
@@ -32,12 +40,12 @@ public class HttpUtil {
 
     private static RequestConfig requestConfig = null;
 
+    private static CloseableHttpClient httpsClient = null;
+
+
     /**
-     * 1.通过默认配置创建一个httpClient实例
-     * 2.设置配置请求参数
-     *      2.1.连接主机服务超时时间
-     *      2.2.请求超时时间
-     *      2.3.数据读取超时时间
+     *
+     * 初始化一个httpClient实例（公用）设置请求相关配置
      */
     static {
         httpClient = HttpClients.createDefault();
@@ -46,15 +54,12 @@ public class HttpUtil {
                 .setConnectionRequestTimeout(35000)
                 .setSocketTimeout(60000)
                 .build();
+        httpsClient = createSSLInsecureClient();
+        //httpsClient=createSSLCertInsecureClient();
     }
 
     /**
-     * 1.创建httpGet远程连接实例
-     * 2.设置请求头信息,鉴权
-     * 3.为httpGet实例设置配置
-     * 4.执行get请求得到返回对象
-     * 5.通过返回对象获取返回数据
-     * 6.通过EntityUtils中的toString方法将结果转换为字符串
+     * 发送httpGet请求
      *
      * @param httpUrl    httpGet请求地址
      * @param paramsMap  httpGet请求参数
@@ -77,13 +82,30 @@ public class HttpUtil {
     }
 
     /**
-     * 1.创建httpPost远程连接实例
-     * 2.设置请求头
-     * 3.为httpPost实例设置配置
-     * 4.封装post请求参数
-     * 5.为httpPost设置封装好的请求参数
-     * 6.httpClient对象执行post请求,并返回响应参数对象
-     * 7.从响应对象中获取响应内容
+     * 发送httpsGet请求
+     *
+     * @param httpUrl    httpGet请求地址
+     * @param paramsMap  httpGet请求参数
+     * @param headersMap httpGet请求头
+     * @return 请求地址服务器返回的数据
+     */
+    public static String apacheHttpsClient4DoGet(String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
+        String result = null;
+        HttpGet httpGet = new HttpGet(setApacheHttpClient4GetUrl(httpUrl, paramsMap));
+        httpGet.setHeader("Authorization", "Bearer da3efcbf-0845-4fe3-8aba-ee040be542c0");
+        setApacheHttpClient4GetRequestHeader(httpGet, headersMap);
+        httpGet.setConfig(requestConfig);
+        try (CloseableHttpResponse httpResponse = httpsClient.execute(httpGet)) {
+            HttpEntity httpEntity = httpResponse.getEntity();
+            result = EntityUtils.toString(httpEntity);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * 发送httpPost请求
      *
      * @param httpUrl    httpPost请求地址
      * @param paramsMap  httpPost请求参数
@@ -99,6 +121,31 @@ public class HttpUtil {
         httpPost.setConfig(requestConfig);
         setApacheHttpClient4PostPrams(httpPost, paramsMap);
         try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
+            HttpEntity httpEntity = httpResponse.getEntity();
+            result = EntityUtils.toString(httpEntity);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * 发送httpsPost请求
+     *
+     * @param httpUrl    httpPost请求地址
+     * @param paramsMap  httpPost请求参数
+     * @param headersMap httpPost请求头
+     * @return 请求地址服务器返回的数据
+     */
+    public static String apacheHttpsClient4DoPost(String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
+        String result = null;
+        HttpPost httpPost = new HttpPost(httpUrl);
+        httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded");
+        httpPost.setHeader("Authorization", "Bearer da3efcbf-0845-4fe3-8aba-ee040be542c0");
+        setApacheHttpClient4PostRequestHeader(httpPost, headersMap);
+        httpPost.setConfig(requestConfig);
+        setApacheHttpClient4PostPrams(httpPost, paramsMap);
+        try (CloseableHttpResponse httpResponse = httpsClient.execute(httpPost)) {
             HttpEntity httpEntity = httpResponse.getEntity();
             result = EntityUtils.toString(httpEntity);
         } catch (IOException e) {
@@ -153,8 +200,9 @@ public class HttpUtil {
      */
     private static void setApacheHttpClient4GetRequestHeader(HttpGet httpGet, Map<String, String> headersMap) {
         if (headersMap != null && headersMap.size() > 0) {
-            for (String key : headersMap.keySet())
+            for (String key : headersMap.keySet()) {
                 httpGet.addHeader(key, headersMap.get(key));
+            }
         }
     }
 
@@ -166,9 +214,54 @@ public class HttpUtil {
      */
     private static void setApacheHttpClient4PostRequestHeader(HttpPost httpPost, Map<String, String> headersMap) {
         if (headersMap != null && headersMap.size() > 0) {
-            for (String key : headersMap.keySet())
+            for (String key : headersMap.keySet()) {
                 httpPost.addHeader(key, headersMap.get(key));
+            }
         }
     }
 
+    /**
+     * httpsClient证书初始化
+     *
+     * @param certPath     证书路径
+     * @param certPassword 证书密码
+     */
+    @SuppressWarnings("unused")
+    private static CloseableHttpClient createSSLCertInsecureClient(String certPath, String certPassword) {
+        SSLContext sslcontext = null;
+        try {
+            KeyStore keyStore = KeyStore.getInstance("PKCS12");
+            FileInputStream inputStream = new FileInputStream(new File(certPath));
+            keyStore.load(inputStream, certPassword.toCharArray());
+            sslcontext = SSLContexts.custom().loadKeyMaterial(keyStore, certPassword.toCharArray()).build();
+        } catch (KeyStoreException | NoSuchAlgorithmException | IOException | CertificateException
+                | KeyManagementException | UnrecoverableKeyException e) {
+            e.printStackTrace();
+        }
+        SSLConnectionSocketFactory sslCsf = new SSLConnectionSocketFactory(sslcontext, new String[]{"TLSv1"},
+                null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+        return HttpClients.custom().setSSLSocketFactory(sslCsf).build();
+    }
+
+    /**
+     * 信任任意证书 (简单，但不建议用于生产代码)
+     *
+     * @return httpsClient对象
+     */
+    @SuppressWarnings("deprecation")
+    public static CloseableHttpClient createSSLInsecureClient() {
+        SSLContext sslContext = null;
+        try {
+            sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+                public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+                    return true;
+                }
+            }).build();
+        } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
+            e.printStackTrace();
+        }
+        SSLConnectionSocketFactory factory = new SSLConnectionSocketFactory(sslContext,
+                SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        return HttpClients.custom().setSSLSocketFactory(factory).build();
+    }
 }

@@ -7,7 +7,7 @@ import java.security.cert.X509Certificate;
 /**
  * @author wangpeng
  * @version 1.0
- * @description
+ * @description https相关
  * @create_time 2020/7/15 17:10:45
  */
 public class MyX509TrustManager implements X509TrustManager {

@@ -17,7 +17,7 @@ import java.security.SecureRandom;
 /**
  * @author wangpeng
  * @version 1.0
- * @description
+ * @description https相关
  * @create_time 2020/7/17 10:59:44
  */
 public class MySecureProtocolSocketFactory implements SecureProtocolSocketFactory {
