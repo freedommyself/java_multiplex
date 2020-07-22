@@ -1,4 +1,4 @@
-package org.java.multiplex.util;
+package org.java.multiplex.util.http;
 
 import javax.net.ssl.X509TrustManager;
 import java.security.cert.CertificateException;

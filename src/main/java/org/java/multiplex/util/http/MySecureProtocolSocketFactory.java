@@ -1,4 +1,4 @@
-package org.java.multiplex.util;
+package org.java.multiplex.util.http;
 
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.HttpClientError;
