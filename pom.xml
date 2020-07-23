@@ -67,16 +67,17 @@
             <version>4.5.12</version>
         </dependency>
 
+        <!-- goole zxing 二维码相关依赖-->
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>core</artifactId>
             <version>3.3.0</version>
         </dependency>
-        <!--<dependency>
+        <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
             <version>3.3.0</version>
-        </dependency>-->
+        </dependency>
 
     </dependencies>
 

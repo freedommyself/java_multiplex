@@ -1,13 +1,19 @@
-package org.java.multiplex.util;
-
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
+package org.java.multiplex.common.utils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
+ * Java SHA-256加密的两种实现方法：
+ * 1.利用Java自带的方法实现加密{@link #encode(String)}
+ * 2.利用Apache的工具类实现加密-->依赖如下
+ * <dependency>
+ * <groupId>org.apache.commons</groupId>
+ * <artifactId>commons-lang3</artifactId>
+ * <version>3.8.1</version>
+ * </dependency>
+ *
  * @author wangpeng
  * @version 1.0
  * @description SHA-256加密
@@ -15,16 +21,24 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Sha256Util {
 
-    //sha256加密
+    /**
+     * java原生sha256加密
+     * <p>
+     * 创建加密对象MessageDigest 并传入加密类型SHA-256
+     * 传入要加密的字符串data
+     * 得到byte[]类型结果digest
+     * 遍历digest将digest转换为string
+     * 得到返回结果
+     *
+     * @param data 待加密字符串
+     * @return 加密后字符串
+     * @throws NoSuchAlgorithmException 没有这样的算法
+     */
     public static String encode(String data) throws NoSuchAlgorithmException {
-        //创建加密对象MessageDigest 并传入加密类型SHA-256
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-        //传入要加密的字符串data
         messageDigest.update(data.getBytes(StandardCharsets.UTF_8));
-        //得到byte[]类型结果digest
         byte[] digest = messageDigest.digest();
         StringBuilder strHexString = new StringBuilder();
-        //遍历digest将digest转换为string
         for (byte b : digest) {
             String hex = Integer.toHexString(0xff & b);
             if (hex.length() == 1) {
@@ -32,20 +46,7 @@ public class Sha256Util {
             }
             strHexString.append(hex);
         }
-        //得到返回结果
         return strHexString.toString();
-    }
-
-    //SHA256加密
-    public static String apacheEncode(String data) {
-        //创建加密对象MessageDigest
-        MessageDigest newDigest = DigestUtils.getSha256Digest();
-        //传入要加密的字符串data
-        newDigest.update(data.getBytes());
-        //得到byte[]类型结果digest
-        byte[] digest = newDigest.digest();
-        //将digest转换为string得到返回结果
-        return Hex.encodeHexString(digest);
     }
 
 }

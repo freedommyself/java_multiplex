@@ -4,6 +4,7 @@ import com.google.zxing.*;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -14,28 +15,25 @@ import java.io.OutputStream;
 import java.util.Hashtable;
 
 /**
- * 1：使用SwetakeQRCode在Java项目中生成二维码
- * 2：使用BarCode4j生成条形码和二维码
- * 3：zxing
- * 4：google chart api就有实现二维码的方法
- * 5：JS生成二维码
- *
  * @author wangpeng
  * @version 1.0
- * @description zxing
+ * @description google zxing
  * @create_time 2020/7/17 0017 13:42:06
  */
 public class QRCodeUtil {
 
-    private static final String CHARSET = "utf-8";
+    //编码字符集
+    private static final String CHARSET = "UTF-8";
+    //图片格式
     private static final String FORMAT_NAME = "JPG";
-    // 二维码尺寸
+    //二维码尺寸
     private static final int QR_CODE_SIZE = 300;
-    // LOGO宽度
+    //LOGO宽度
     private static final int WIDTH = 60;
-    // LOGO高度
+    //LOGO高度
     private static final int HEIGHT = 60;
 
+    //生成二维码
     private static BufferedImage createImage(String content, String imgPath, boolean needCompress) throws Exception {
         Hashtable<EncodeHintType, Object> hints = new Hashtable<>();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
@@ -59,11 +57,11 @@ public class QRCodeUtil {
         return image;
     }
 
+    //插入图片
     private static void insertImage(BufferedImage source, String imgPath, boolean needCompress) throws Exception {
         File file = new File(imgPath);
         if (!file.exists()) {
-            System.err.println("" + imgPath + "   该文件不存在！");
-            return;
+            throw new RuntimeException("" + imgPath + "   该文件不存在！");
         }
         Image src = ImageIO.read(new File(imgPath));
         int width = src.getWidth(null);
@@ -93,6 +91,7 @@ public class QRCodeUtil {
         graph.dispose();
     }
 
+    //生成二维码
     public static void encode(String content, String imgPath, String destPath, boolean needCompress) throws Exception {
         BufferedImage image = QRCodeUtil.createImage(content, imgPath, needCompress);
         mkdirs(destPath);
@@ -101,10 +100,12 @@ public class QRCodeUtil {
         ImageIO.write(image, FORMAT_NAME, new File(destPath));
     }
 
+    //生成二维码
     public static void encode(String content, String destPath) throws Exception {
         QRCodeUtil.encode(content, null, destPath, false);
     }
 
+    //新建目录
     public static void mkdirs(String destPath) {
         File file = new File(destPath);
         // 当文件夹不存在时，mkdirs会自动创建多层目录，区别于mkdir．(mkdir如果父目录不存在则会抛出异常)
@@ -113,16 +114,19 @@ public class QRCodeUtil {
         }
     }
 
+    //生成二维码
     public static void encode(String content, String imgPath, OutputStream output, boolean needCompress)
             throws Exception {
         BufferedImage image = QRCodeUtil.createImage(content, imgPath, needCompress);
         ImageIO.write(image, FORMAT_NAME, output);
     }
 
+    //生成二维码
     public static void encode(String content, OutputStream output) throws Exception {
         QRCodeUtil.encode(content, null, output, false);
     }
 
+    //解析二维码
     public static String decode(File file) throws Exception {
         BufferedImage image = ImageIO.read(file);
         if (image == null) {
@@ -130,13 +134,13 @@ public class QRCodeUtil {
         }
         BufferedImageLuminanceSource source = new BufferedImageLuminanceSource(image);
         BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-        Hashtable<DecodeHintType, String> hints = new Hashtable<>();
+        Hashtable<DecodeHintType, Object> hints = new Hashtable<>();
         hints.put(DecodeHintType.CHARACTER_SET, CHARSET);
         Result result = new MultiFormatReader().decode(bitmap, hints);
-        String text = result.getText();
-        return text;
+        return result.getText();
     }
 
+    //解析二维码
     public static String decode(String path) throws Exception {
         return QRCodeUtil.decode(new File(path));
     }
@@ -154,7 +158,6 @@ public class QRCodeUtil {
         String str = QRCodeUtil.decode(destPath);
         // 打印出解析出的内容
         System.out.println(str);
-
     }
 
 }
