@@ -43,16 +43,6 @@ import java.util.stream.Collectors;
 
 
 /**
- * 目前JAVA实现HTTP请求的方法用的最多的有两种：
- * 1.一种是通过HTTPClient这种第三方的开源框架去实现。
- * HTTPClient对HTTP的封装性比较不错，通过它基本上能够满足我们大部分的需求，
- * HttpClient3.1是org.apache.commons.httpclient下操作远程url的工具包，
- * 虽然已不再更新，但实现工作中使用httpClient3.1的代码还是很多，
- * {@link #apacheHttpClient3DoGet(String, Map, Map),#apacheHttpClient3DoPost(String, Map, Map)}
- * HttpClient4.5是org.apache.http.client下操作远程url的工具包，最新的；
- * 2.通过HttpURLConnection去实现{@link #javaHttpDoGet(String, Map, Map),#javaHttpDoPost(String, Map, Map)} }
- * java.net.HttpURLConnection是JAVA的标准类，是JAVA比较原生的一种实现方式。
- *
  * @author wangpeng
  * @version 1.0
  * @description HTTP[S]请求
@@ -61,16 +51,7 @@ import java.util.stream.Collectors;
 public class HttpUtil {
 //==============================================================java原生================================================================
 
-    /**
-     * 向指定URL发送HTTP.GET方法的请求
-     *
-     * @param httpUrl http请求路径
-     * @param params  http请求参数
-     *                形式{@code name1=value1&name2=value2}
-     * @param headers http请求头
-     * @return URL 所代表远程资源的响应结果
-     * @throws IOException
-     */
+    //向指定URL发送HTTP.GET方法的请求
     public static String javaHttpDoGet(String httpUrl, Map<String, String> params, Map<String, String> headers) {
         String result = null;
         try {
@@ -97,21 +78,7 @@ public class HttpUtil {
         return result;
     }
 
-    /**
-     * 向指定URL发送HTTPS.GET方法的请求
-     * <p>
-     * 注意：
-     * https请求的时候会验证证书，有2种方法解决：
-     * 1.信任所有证书
-     * 2.手动导入证书
-     *
-     * @param httpUrl https请求路径
-     * @param params  https请求参数
-     *                形式{@code name1=value1&name2=value2}
-     * @param headers https请求头
-     * @return URL 所代表远程资源的响应结果
-     * @throws IOException,NoSuchAlgorithmException,KeyManagementException
-     */
+    //向指定URL发送HTTPS.GET方法的请求
     public static String javaHttpsDoGet(String httpUrl, Map<String, String> params, Map<String, String> headers) {
         String result = null;
         try {
@@ -147,20 +114,7 @@ public class HttpUtil {
         return result;
     }
 
-    /**
-     * 向指定URL发送HTTP.POST方法的请求
-     *
-     * <p>
-     * OutputStream os = connection.getOutputStream();
-     * os.write(param.getBytes());
-     *
-     * @param httpUrl http请求路径
-     * @param params  http请求参数
-     *                形式{@code name1=value1&name2=value2}
-     * @param headers http请求头
-     * @return URL 所代表远程资源的响应结果
-     * @throws IOException
-     */
+    //向指定URL发送HTTP.POST方法的请求
     public static String javaHttpDoPost(String httpUrl, Map<String, String> params, Map<String, String> headers) {
         String result = null;
         try {
@@ -197,15 +151,7 @@ public class HttpUtil {
         return result;
     }
 
-    /**
-     * 向指定URL发送HTTPS.POST方法的请求
-     *
-     * @param httpUrl https请求路径
-     * @param params  https请求参数
-     *                形式{@code name1=value1&name2=value2}
-     * @param headers https请求头
-     * @throws IOException,NoSuchAlgorithmException,KeyManagementException
-     */
+    //向指定URL发送HTTPS.POST方法的请求
     public static String javaHttpsDoPost(String httpUrl, Map<String, String> params, Map<String, String> headers) {
         String result = null;
         try {
@@ -251,20 +197,12 @@ public class HttpUtil {
         return result;
     }
 
-
-    /**
-     * 设置HTTP[S]请求参数
-     * <p>
-     * 注意：
-     * 1.对于get请求，返回url和参数拼接成的新的请求路径
-     * 形式：{@code http://www.baidu.com?name1=value1&name2=value2}
-     * 2.对于post请求，返回封装好的请求参数字符串
-     * 形式：{@code name1=value1&name2=value2}
-     *
-     * @param url    请求路径
-     * @param params 请求参数
-     * @return 封装好的URL+参数|参数
-     */
+    //设置HTTP[S]请求参数
+    //注意：
+    //1.对于get请求，返回url和参数拼接成的新的请求路径
+    //形式：{@code http://www.baidu.com?name1=value1&name2=value2}
+    //2.对于post请求，返回封装好的请求参数字符串
+    //形式：{@code name1=value1&name2=value2}
     private static String setParams(String url, Map<String, String> params) {
         String paramsJoin = "";
         if (params != null && params.size() > 0) {
@@ -281,16 +219,10 @@ public class HttpUtil {
             return paramsJoin;
     }
 
-    /**
-     * 设置HTTP[S]请求头
-     * <p>
-     * 注意：
-     * 1.HttpsURLConnection向上造型复用此方法
-     * 2.assert只是为了代码结构好看，无任何意义
-     *
-     * @param connection {@link HttpURLConnection,HttpsURLConnection}
-     * @param headers    http[s]请求头
-     */
+    //设置HTTP[S]请求头
+    //注意：
+    //1.HttpsURLConnection向上造型复用此方法
+    //2.assert只是为了代码结构好看，无任何意义
     private static void setHeaders(HttpURLConnection connection, Map<String, String> headers) {
         if (headers != null && headers.size() > 0) {
             for (String key : headers.keySet()) {
@@ -300,16 +232,7 @@ public class HttpUtil {
         assert 1 == 1;
     }
 
-    /**
-     * HTTP[S]请求响应
-     * <p>
-     * 注意：
-     * 状态码位200则获取返回的数据，否则返回失败信息
-     *
-     * @param connection {@link HttpURLConnection,HttpsURLConnection}
-     * @return 远程资源的响应结果
-     * @throws IOException
-     */
+    //HTTP[S]请求响应
     private static String response(HttpURLConnection connection) {
         String result = "响应失败";
         try {

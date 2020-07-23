@@ -29,6 +29,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * 目前JAVA实现HTTP请求的方法用的最多的有两种：
+ * 1.通过HttpURLConnection去实现
+ * java.net.HttpURLConnection是JAVA的标准类，是JAVA比较原生的一种实现方式。
+ * 2.一种是通过HTTPClient这种第三方的开源框架去实现。
+ * HttpClient3.1是org.apache.commons.httpclient下操作远程url的工具包，
+ * HttpClient4.5是org.apache.http.client下操作远程url的工具包，最新的；
+ *
  * @author wangpeng
  * @version 1.0
  * @description apacheHttpClient4
@@ -44,7 +51,6 @@ public class HttpUtil {
 
 
     /**
-     *
      * 初始化一个httpClient实例（公用）设置请求相关配置
      */
     static {
