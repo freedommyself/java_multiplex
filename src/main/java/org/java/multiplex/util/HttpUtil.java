@@ -1,15 +1,15 @@
-package org.java.multiplex.util.http;
+package org.java.multiplex.util;
 
 
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.params.HttpConnectionParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.httpclient.protocol.ControllerThreadSocketFactory;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
+import org.apache.commons.httpclient.protocol.SecureProtocolSocketFactory;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
@@ -26,13 +26,9 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
+import javax.net.ssl.*;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.CertificateException;
@@ -138,7 +134,8 @@ public class HttpUtil {
             setHeaders(connection, headers);
             //通过连接对象获取一个输出流
             //通过输出流对象将参数写出去/传输出去,它是通过字节数组写出的
-            PrintWriter out = new PrintWriter(new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8));
+            PrintWriter out = new PrintWriter(new OutputStreamWriter(connection.getOutputStream(),
+                    StandardCharsets.UTF_8));
             out.println(setParams(null, params));
             out.flush();
             out.close();
@@ -261,15 +258,9 @@ public class HttpUtil {
 
 //==============================================================apache httpClient3================================================================
 
-    /**
-     * 向指定URL发送HTTP.GET方法的请求
-     *
-     * @param httpUrl    httpGet请求地址
-     * @param paramsMap  httpGet请求参数
-     * @param headersMap httpGet请求头
-     * @return 请求地址服务器返回的数据
-     */
-    public static String apacheHttpClient3DoGet(String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
+    //向指定URL发送HTTP.GET方法的请求
+    public static String apacheHttpClient3DoGet(String httpUrl, Map<String, String> paramsMap,
+                                                Map<String, String> headersMap) {
         String result = null;
         //创建httpClient实例
         HttpClient httpClient = new HttpClient();
@@ -282,7 +273,8 @@ public class HttpUtil {
         //设置get请求超时为60000毫秒
         getMethod.getParams().setParameter(HttpMethodParams.SO_TIMEOUT, 60000);
         //设置请求重试机制，默认重试次数：3次，参数设置为true，重试机制可用，false相反
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(3, true));
+        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
+                new DefaultHttpMethodRetryHandler(3, true));
         try {
             //执行Get方法
             int statusCode = httpClient.executeMethod(getMethod);
@@ -301,15 +293,9 @@ public class HttpUtil {
         return result;
     }
 
-    /**
-     * 向指定URL发送HTTPS.GET方法的请求
-     *
-     * @param httpUrl    httpGet请求地址
-     * @param paramsMap  httpGet请求参数
-     * @param headersMap httpGet请求头
-     * @return 请求地址服务器返回的数据
-     */
-    public static String apacheHttpsClient3DoGet(String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
+    //向指定URL发送HTTPS.GET方法的请求
+    public static String apacheHttpsClient3DoGet(String httpUrl, Map<String, String> paramsMap,
+                                                 Map<String, String> headersMap) {
         String result = null;
         //声明
         ProtocolSocketFactory fcty = new MySecureProtocolSocketFactory();
@@ -326,7 +312,8 @@ public class HttpUtil {
         //设置get请求超时为60000毫秒
         getMethod.getParams().setParameter(HttpMethodParams.SO_TIMEOUT, 60000);
         //设置请求重试机制，默认重试次数：3次，参数设置为true，重试机制可用，false相反
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(3, true));
+        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
+                new DefaultHttpMethodRetryHandler(3, true));
         try {
             //执行Get方法
             int statusCode = httpClient.executeMethod(getMethod);
@@ -345,15 +332,9 @@ public class HttpUtil {
         return result;
     }
 
-    /**
-     * 向指定URL发送HTTP.POST方法的请求
-     *
-     * @param httpUrl    httpPost请求地址
-     * @param paramsMap  httpPost请求参数
-     * @param headersMap httpPost请求头
-     * @return 请求地址服务器返回的数据
-     */
-    public static String apacheHttpClient3DoPost(String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
+    //向指定URL发送HTTP.POST方法的请求
+    public static String apacheHttpClient3DoPost(String httpUrl, Map<String, String> paramsMap,
+                                                 Map<String, String> headersMap) {
         String result = null;
         //创建httpClient实例对象
         HttpClient httpClient = new HttpClient();
@@ -366,7 +347,8 @@ public class HttpUtil {
         //设置post请求超时时间
         postMethod.getParams().setParameter(HttpMethodParams.SO_TIMEOUT, 60000);
         //设置请求重试机制，默认重试次数：3次，参数设置为true，重试机制可用，false相反
-        postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(3, true));
+        postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
+                new DefaultHttpMethodRetryHandler(3, true));
         setApacheHttpClient3PostPrams(postMethod, headersMap);
         try {
             //执行POST方法
@@ -385,15 +367,9 @@ public class HttpUtil {
         return result;
     }
 
-    /**
-     * 向指定URL发送HTTPS.POST方法的请求
-     *
-     * @param httpUrl    httpPost请求地址
-     * @param paramsMap  httpPost请求参数
-     * @param headersMap httpPost请求头
-     * @return 请求地址服务器返回的数据
-     */
-    public static String apacheHttpsClient3DoPost(String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
+    //向指定URL发送HTTPS.POST方法的请求
+    public static String apacheHttpsClient3DoPost(String httpUrl, Map<String, String> paramsMap,
+                                                  Map<String, String> headersMap) {
         String result = null;
         //声明
         ProtocolSocketFactory fcty = new MySecureProtocolSocketFactory();
@@ -410,7 +386,8 @@ public class HttpUtil {
         //设置post请求超时时间
         postMethod.getParams().setParameter(HttpMethodParams.SO_TIMEOUT, 60000);
         //设置请求重试机制，默认重试次数：3次，参数设置为true，重试机制可用，false相反
-        postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(3, true));
+        postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
+                new DefaultHttpMethodRetryHandler(3, true));
         setApacheHttpClient3PostPrams(postMethod, headersMap);
         try {
             //执行POST方法
@@ -429,13 +406,7 @@ public class HttpUtil {
         return result;
     }
 
-    /**
-     * 拼接httpGet请求地址
-     *
-     * @param httpUrl   httpGet请求地址
-     * @param paramsMap httpGet请求参数
-     * @return 拼接后的地址
-     */
+    //拼接httpGet请求地址
     private static String setApacheHttpClient3GetUrl(String httpUrl, Map<String, String> paramsMap) {
         if (paramsMap != null && paramsMap.size() > 0) {
             httpUrl += paramsMap.keySet().stream()
@@ -446,12 +417,7 @@ public class HttpUtil {
         return httpUrl;
     }
 
-    /**
-     * 封装httpPost请求参数
-     *
-     * @param postMethod {@link PostMethod}
-     * @param paramsMap  httpPost请求参数
-     */
+    //封装httpPost请求参数
     private static void setApacheHttpClient3PostPrams(PostMethod postMethod, Map<String, String> paramsMap) {
         NameValuePair[] nvp = null;
         //判断参数map集合paramMap是否为空
@@ -468,12 +434,7 @@ public class HttpUtil {
         }
     }
 
-    /**
-     * 设置httpGet请求头
-     *
-     * @param getMethod  {@link GetMethod}
-     * @param headersMap httpGet请求头
-     */
+    //设置httpGet请求头
     private static void setApacheHttpClient3GetRequestHeader(GetMethod getMethod, Map<String, String> headersMap) {
         if (headersMap != null && headersMap.size() > 0) {
             for (String key : headersMap.keySet())
@@ -481,12 +442,7 @@ public class HttpUtil {
         }
     }
 
-    /**
-     * 设置httpPost请求头
-     *
-     * @param postMethod {@link PostMethod}
-     * @param headersMap httpPost请求头
-     */
+    //设置httpPost请求头
     private static void setApacheHttpClient3PostRequestHeader(PostMethod postMethod, Map<String, String> headersMap) {
         if (headersMap != null && headersMap.size() > 0) {
             for (String key : headersMap.keySet())
@@ -496,15 +452,9 @@ public class HttpUtil {
 
 //==============================================================apache httpClient4================================================================
 
-    /**
-     * 向指定URL发送HTTP.GET方法的请求
-     *
-     * @param httpUrl    httpGet请求地址
-     * @param paramsMap  httpGet请求参数
-     * @param headersMap httpGet请求头
-     * @return 请求地址服务器返回的数据
-     */
-    public static String apacheHttpClient4DoGet(String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
+    //向指定URL发送HTTP.GET方法的请求
+    public static String apacheHttpClient4DoGet(String httpUrl, Map<String, String> paramsMap,
+                                                Map<String, String> headersMap) {
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse httpResponse = null;
         String result = "";
@@ -541,15 +491,9 @@ public class HttpUtil {
         return result;
     }
 
-    /**
-     * 向指定URL发送HTTPS.GET方法的请求
-     *
-     * @param httpUrl    httpsGet请求地址
-     * @param paramsMap  httpsGet请求参数
-     * @param headersMap httpsGet请求头
-     * @return 请求地址服务器返回的数据
-     */
-    public static String apacheHttpsClient4DoGet(String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
+    //向指定URL发送HTTPS.GET方法的请求
+    public static String apacheHttpsClient4DoGet(String httpUrl, Map<String, String> paramsMap,
+                                                 Map<String, String> headersMap) {
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse httpResponse = null;
         String result = "";
@@ -586,15 +530,9 @@ public class HttpUtil {
         return result;
     }
 
-    /**
-     * 向指定URL发送HTTP.POST方法的请求
-     *
-     * @param httpUrl    httpPost请求地址
-     * @param paramsMap  httpPost请求参数
-     * @param headersMap httpPost请求头
-     * @return 请求地址服务器返回的数据
-     */
-    public static String apacheHttpClient4DoPost(String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
+    //向指定URL发送HTTP.POST方法的请求
+    public static String apacheHttpClient4DoPost(String httpUrl, Map<String, String> paramsMap,
+                                                 Map<String, String> headersMap) {
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse httpResponse = null;
         String result = "";
@@ -633,15 +571,9 @@ public class HttpUtil {
         return result;
     }
 
-    /**
-     * 向指定URL发送HTTPS.POST方法的请求
-     *
-     * @param httpUrl    httpsPost请求地址
-     * @param paramsMap  httpsPost请求参数
-     * @param headersMap httpsPost请求头
-     * @return 请求地址服务器返回的数据
-     */
-    public static String apacheHttpsClient4DoPost(String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
+    //向指定URL发送HTTPS.POST方法的请求
+    public static String apacheHttpsClient4DoPost(String httpUrl, Map<String, String> paramsMap,
+                                                  Map<String, String> headersMap) {
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse httpResponse = null;
         String result = "";
@@ -680,14 +612,7 @@ public class HttpUtil {
         return result;
     }
 
-
-    /**
-     * 拼接httpGet请求地址
-     *
-     * @param httpUrl   httpGet请求地址
-     * @param paramsMap httpGet请求参数
-     * @return 拼接后的地址
-     */
+    //拼接httpGet请求地址
     private static String setApacheHttpClient4GetUrl(String httpUrl, Map<String, String> paramsMap) {
         if (paramsMap != null && paramsMap.size() > 0) {
             httpUrl += paramsMap.keySet().stream()
@@ -698,12 +623,7 @@ public class HttpUtil {
         return httpUrl;
     }
 
-    /**
-     * 封装httpPost请求参数
-     *
-     * @param httpPost  httpPost请求地址
-     * @param paramsMap httpPost请求参数
-     */
+    //封装httpPost请求参数
     private static void setApacheHttpClient4PostPrams(HttpPost httpPost, Map<String, String> paramsMap) {
         try {
             if (paramsMap != null && paramsMap.size() > 0) {
@@ -719,12 +639,7 @@ public class HttpUtil {
         }
     }
 
-    /**
-     * 设置httpGet请求头
-     *
-     * @param httpGet    {@link HttpGet}
-     * @param headersMap httpGet请求头
-     */
+    //设置httpGet请求头
     private static void setApacheHttpClient4GetRequestHeader(HttpGet httpGet, Map<String, String> headersMap) {
         if (headersMap != null && headersMap.size() > 0) {
             for (String key : headersMap.keySet())
@@ -732,12 +647,7 @@ public class HttpUtil {
         }
     }
 
-    /**
-     * 设置httpPost请求头
-     *
-     * @param httpPost   {@link HttpPost}
-     * @param headersMap httpPost请求头
-     */
+    //设置httpPost请求头
     private static void setApacheHttpClient4PostRequestHeader(HttpPost httpPost, Map<String, String> headersMap) {
         if (headersMap != null && headersMap.size() > 0) {
             for (String key : headersMap.keySet())
@@ -745,12 +655,7 @@ public class HttpUtil {
         }
     }
 
-    /**
-     * 关闭资源
-     *
-     * @param httpResponse {@link org.apache.http.HttpResponse}
-     * @param httpClient   {@link org.apache.http.client.HttpClient}
-     */
+    //关闭资源
     private static void closeResource(CloseableHttpResponse httpResponse, CloseableHttpClient httpClient) {
         if (httpResponse != null) {
             try {
@@ -768,12 +673,7 @@ public class HttpUtil {
         }
     }
 
-    /**
-     * httpsClient证书初始化
-     *
-     * @param certPath     证书路径
-     * @param certPassword 证书密码
-     */
+    //httpsClient证书初始化
     @SuppressWarnings("unused")
     private static CloseableHttpClient createSSLCertInsecureClient(String certPath, String certPassword) {
         SSLContext sslcontext = null;
@@ -792,11 +692,7 @@ public class HttpUtil {
         return HttpClients.custom().setSSLSocketFactory(sslCsf).build();
     }
 
-    /**
-     * 信任任意证书 (简单，但不建议用于生产代码)
-     *
-     * @return httpsClient对象
-     */
+    //信任任意证书 (简单，但不建议用于生产代码)
     @SuppressWarnings("deprecation")
     public static CloseableHttpClient createSSLInsecureClient() {
         SSLContext sslContext = null;
@@ -816,4 +712,84 @@ public class HttpUtil {
         return HttpClients.custom().setSSLSocketFactory(factory).build();
     }
 
+}
+//==============================================================辅助类================================================================
+
+class MyX509TrustManager implements X509TrustManager {
+
+    @Override
+    public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+
+    }
+
+    @Override
+    public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+
+    }
+
+    @Override
+    public X509Certificate[] getAcceptedIssuers() {
+        return new X509Certificate[0];
+    }
+
+}
+
+class MySecureProtocolSocketFactory implements SecureProtocolSocketFactory {
+
+    //这里添加一个属性，主要目的就是来获取ssl跳过验证
+    private SSLContext sslContext = null;
+
+    //这个创建一个获取SSLContext的方法，导入MyX509TrustManager进行初始化
+    private static SSLContext createEasySSLContext() {
+        try {
+            SSLContext context = SSLContext.getInstance("SSL");
+            context.init(null, new TrustManager[]{new MyX509TrustManager()},
+                    new SecureRandom());
+            return context;
+        } catch (Exception e) {
+            throw new HttpClientError(e.toString());
+        }
+    }
+
+    //判断获取SSLContext
+    private SSLContext getSSLContext() {
+        if (this.sslContext == null) {
+            this.sslContext = createEasySSLContext();
+        }
+        return this.sslContext;
+    }
+
+    //后面的方法基本上就是带入相关参数就可以了
+    @Override
+    public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException,
+            UnknownHostException {
+        return getSSLContext().getSocketFactory().createSocket(socket, host, port, autoClose);
+    }
+
+    @Override
+    public Socket createSocket(String host, int port, InetAddress clientHost, int clientPort) throws IOException,
+            UnknownHostException {
+        return getSSLContext().getSocketFactory().createSocket(host, port, clientHost, clientPort);
+    }
+
+    @Override
+    public Socket createSocket(String host, int port, InetAddress localAddress, int localPort,
+                               HttpConnectionParams params)
+            throws IOException, UnknownHostException, ConnectTimeoutException {
+        if (params == null) {
+            throw new IllegalArgumentException("Parameters may not be null");
+        }
+        int timeout = params.getConnectionTimeout();
+        if (timeout == 0) {
+            return createSocket(host, port, localAddress, localPort);
+        } else {
+            return ControllerThreadSocketFactory.createSocket(
+                    this, host, port, localAddress, localPort, timeout);
+        }
+    }
+
+    @Override
+    public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+        return getSSLContext().getSocketFactory().createSocket(host, port);
+    }
 }

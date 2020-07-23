@@ -72,7 +72,8 @@ public class HttpUtil {
      * @param headersMap httpGet请求头
      * @return 请求地址服务器返回的数据
      */
-    public static String apacheHttpClient4DoGet(String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
+    public static String apacheHttpClient4DoGet(
+            String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
         String result = null;
         HttpGet httpGet = new HttpGet(setApacheHttpClient4GetUrl(httpUrl, paramsMap));
         httpGet.setHeader("Authorization", "Bearer da3efcbf-0845-4fe3-8aba-ee040be542c0");
@@ -95,7 +96,8 @@ public class HttpUtil {
      * @param headersMap httpGet请求头
      * @return 请求地址服务器返回的数据
      */
-    public static String apacheHttpsClient4DoGet(String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
+    public static String apacheHttpsClient4DoGet(
+            String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
         String result = null;
         HttpGet httpGet = new HttpGet(setApacheHttpClient4GetUrl(httpUrl, paramsMap));
         httpGet.setHeader("Authorization", "Bearer da3efcbf-0845-4fe3-8aba-ee040be542c0");
@@ -118,7 +120,8 @@ public class HttpUtil {
      * @param headersMap httpPost请求头
      * @return 请求地址服务器返回的数据
      */
-    public static String apacheHttpClient4DoPost(String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
+    public static String apacheHttpClient4DoPost(
+            String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
         String result = null;
         HttpPost httpPost = new HttpPost(httpUrl);
         httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -143,7 +146,8 @@ public class HttpUtil {
      * @param headersMap httpPost请求头
      * @return 请求地址服务器返回的数据
      */
-    public static String apacheHttpsClient4DoPost(String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
+    public static String apacheHttpsClient4DoPost(
+            String httpUrl, Map<String, String> paramsMap, Map<String, String> headersMap) {
         String result = null;
         HttpPost httpPost = new HttpPost(httpUrl);
         httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -167,7 +171,8 @@ public class HttpUtil {
      * @param paramsMap httpGet请求参数
      * @return 拼接后的地址
      */
-    private static String setApacheHttpClient4GetUrl(String httpUrl, Map<String, String> paramsMap) {
+    private static String setApacheHttpClient4GetUrl(
+            String httpUrl, Map<String, String> paramsMap) {
         if (paramsMap != null && paramsMap.size() > 0) {
             httpUrl += paramsMap.keySet().stream()
                     .map(key -> key + "=" + paramsMap.get(key) + "&")
@@ -266,6 +271,7 @@ public class HttpUtil {
         } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
             e.printStackTrace();
         }
+        assert sslContext != null;
         SSLConnectionSocketFactory factory = new SSLConnectionSocketFactory(sslContext,
                 SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
         return HttpClients.custom().setSSLSocketFactory(factory).build();

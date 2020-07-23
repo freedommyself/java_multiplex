@@ -190,6 +190,8 @@ public class QRCodeUtil {
      *
      * @param content 存放在二维码中的内容
      * @param output  生成的二维码的存放路径的流
+     * @throws Exception                   QRCodeUtil.createImage(content, imgPath, needCompress)
+     *                                     &ImageIO.write(image, FORMAT_NAME, output)
      * @throws IOException,WriterException QRCodeUtil.encode(content, null, destPath, false)
      */
     public static void encode(String content, OutputStream output) throws IOException, WriterException {
