@@ -56,7 +56,8 @@ public class MD5Util {
      * @param origin  待加密字符串
      * @param charset 字符编码
      * @return 加密后的字符串
-     * @throws Exception MessageDigest.getInstance("MD5");origin.getBytes(charset)
+     * @throws NoSuchAlgorithmException     MessageDigest.getInstance("MD5")
+     * @throws UnsupportedEncodingException origin.getBytes(charset)
      */
     public static String encode(String origin, String charset) throws NoSuchAlgorithmException,
             UnsupportedEncodingException {

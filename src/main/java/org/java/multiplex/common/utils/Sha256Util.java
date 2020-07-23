@@ -7,12 +7,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Java SHA-256加密的两种实现方法：
  * 1.利用Java自带的方法实现加密{@link #encode(String)}
- * 2.利用Apache的工具类实现加密-->依赖如下
- * <dependency>
- * <groupId>org.apache.commons</groupId>
- * <artifactId>commons-lang3</artifactId>
- * <version>3.8.1</version>
- * </dependency>
+ * 2.利用Apache的工具类实现加密
  *
  * @author wangpeng
  * @version 1.0
@@ -32,7 +27,7 @@ public class Sha256Util {
      *
      * @param data 待加密字符串
      * @return 加密后字符串
-     * @throws NoSuchAlgorithmException 没有这样的算法
+     * @throws NoSuchAlgorithmException MessageDigest.getInstance("SHA-256")
      */
     public static String encode(String data) throws NoSuchAlgorithmException {
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
