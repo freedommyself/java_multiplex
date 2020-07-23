@@ -16,24 +16,29 @@ import java.security.NoSuchAlgorithmException;
 public class Sha256Util {
 
     //sha256加密
-    public static String encode(String data) throws NoSuchAlgorithmException {
-        //创建加密对象MessageDigest 并传入加密类型SHA-256
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-        //传入要加密的字符串data
-        messageDigest.update(data.getBytes(StandardCharsets.UTF_8));
-        //得到byte[]类型结果digest
-        byte[] digest = messageDigest.digest();
-        StringBuilder strHexString = new StringBuilder();
-        //遍历digest将digest转换为string
-        for (byte b : digest) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) {
-                strHexString.append('0');
+    public static String encode(String data) {
+        try {
+            //创建加密对象MessageDigest 并传入加密类型SHA-256
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            //传入要加密的字符串data
+            messageDigest.update(data.getBytes(StandardCharsets.UTF_8));
+            //得到byte[]类型结果digest
+            byte[] digest = messageDigest.digest();
+            StringBuilder strHexString = new StringBuilder();
+            //遍历digest将digest转换为string
+            for (byte b : digest) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    strHexString.append('0');
+                }
+                strHexString.append(hex);
             }
-            strHexString.append(hex);
+            //得到返回结果
+            return strHexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
-        //得到返回结果
-        return strHexString.toString();
+        return null;
     }
 
     //SHA256加密

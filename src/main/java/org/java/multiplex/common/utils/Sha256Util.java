@@ -27,21 +27,25 @@ public class Sha256Util {
      *
      * @param data 待加密字符串
      * @return 加密后字符串
-     * @throws NoSuchAlgorithmException MessageDigest.getInstance("SHA-256")
      */
-    public static String encode(String data) throws NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-        messageDigest.update(data.getBytes(StandardCharsets.UTF_8));
-        byte[] digest = messageDigest.digest();
-        StringBuilder strHexString = new StringBuilder();
-        for (byte b : digest) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) {
-                strHexString.append('0');
+    public static String encode(String data) {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            messageDigest.update(data.getBytes(StandardCharsets.UTF_8));
+            byte[] digest = messageDigest.digest();
+            StringBuilder strHexString = new StringBuilder();
+            for (byte b : digest) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    strHexString.append('0');
+                }
+                strHexString.append(hex);
             }
-            strHexString.append(hex);
+            return strHexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
-        return strHexString.toString();
+        return null;
     }
 
 }

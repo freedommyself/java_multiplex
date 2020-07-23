@@ -171,8 +171,7 @@ public class HttpUtil {
      * @param paramsMap httpGet请求参数
      * @return 拼接后的地址
      */
-    private static String setApacheHttpClient4GetUrl(
-            String httpUrl, Map<String, String> paramsMap) {
+    private static String setApacheHttpClient4GetUrl(String httpUrl, Map<String, String> paramsMap) {
         if (paramsMap != null && paramsMap.size() > 0) {
             httpUrl += paramsMap.keySet().stream()
                     .map(key -> key + "=" + paramsMap.get(key) + "&")

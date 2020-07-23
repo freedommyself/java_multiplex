@@ -56,19 +56,21 @@ public class MD5Util {
      * @param origin  待加密字符串
      * @param charset 字符编码
      * @return 加密后的字符串
-     * @throws NoSuchAlgorithmException     MessageDigest.getInstance("MD5")
-     * @throws UnsupportedEncodingException origin.getBytes(charset)
      */
-    public static String encode(String origin, String charset) throws NoSuchAlgorithmException,
-            UnsupportedEncodingException {
-        String md5String;
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        if (charset == null || "".equals(charset)) {
-            md5String = byteArrayToHexString(md.digest(origin.getBytes()));
-        } else {
-            md5String = byteArrayToHexString(md.digest(origin.getBytes(charset)));
+    public static String encode(String origin, String charset) {
+        try {
+            String md5String;
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            if (charset == null || "".equals(charset)) {
+                md5String = byteArrayToHexString(md.digest(origin.getBytes()));
+            } else {
+                md5String = byteArrayToHexString(md.digest(origin.getBytes(charset)));
+            }
+            return md5String;
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
-        return md5String;
+        return null;
     }
 
 }

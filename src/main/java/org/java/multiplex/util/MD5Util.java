@@ -50,15 +50,20 @@ public class MD5Util {
     }
 
     //MD5加密
-    public static String encode(String origin, String charset) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        String md5Str;
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        if (charset == null || "".equals(charset)) {
-            md5Str = byteArrayToHexString(md.digest(origin.getBytes()));
-        } else {
-            md5Str = byteArrayToHexString(md.digest(origin.getBytes(charset)));
+    public static String encode(String origin, String charset) {
+        try {
+            String md5String;
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            if (charset == null || "".equals(charset)) {
+                md5String = byteArrayToHexString(md.digest(origin.getBytes()));
+            } else {
+                md5String = byteArrayToHexString(md.digest(origin.getBytes(charset)));
+            }
+            return md5String;
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
-        return md5Str;
+        return null;
     }
 
     //==================================================spring工具类实现================================================
